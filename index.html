@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AquaCultura Sostenible — Biofiltración Natural</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --ink:   #0d1b2a;
+    --navy:  #1b3a5c;
+    --ocean: #2e6da4;
+    --tide:  #4a90c4;
+    --mist:  #a8c8e8;
+    --foam:  #e6f2fb;
+    --sand:  #f0f5fa;
+    --gold:  #c9a96e;
+    --deep:  #0d2137;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', sans-serif; background: var(--foam); color: var(--ink); overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(230,242,251,0.9); backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(46,109,164,0.12);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;
+    font-weight: 600; letter-spacing: 0.08em; color: var(--ocean); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-family: 'Outfit', sans-serif; font-size: 0.78rem;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink); text-decoration: none; opacity: 0.65; transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+  .nav-cta {
+    font-family: 'Outfit', sans-serif; font-size: 0.78rem; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--foam); background: var(--ocean);
+    padding: 0.6rem 1.5rem; text-decoration: none; transition: background 0.2s;
+  }
+  .nav-cta:hover { background: var(--deep); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+    position: relative; overflow: hidden;
+  }
+  .hero-left {
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 10rem 4rem 8rem; background: var(--deep); z-index: 2;
+  }
+  .hero-tag {
+    font-family: 'Outfit', sans-serif; font-size: 0.68rem;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--mist); opacity: 0.7; margin-bottom: 2.2rem;
+    display: flex; align-items: center; gap: 0.8rem;
+  }
+  .hero-tag::before { content: ''; width: 2rem; height: 1px; background: var(--gold); }
+  .hero-h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    font-weight: 300; line-height: 1.05; color: var(--foam); margin-bottom: 1.8rem;
+  }
+  .hero-h1 em { font-style: italic; color: var(--mist); }
+  .hero-sub {
+    font-size: 1.05rem; line-height: 1.75; color: var(--mist);
+    opacity: 0.8; max-width: 420px; margin-bottom: 3rem;
+  }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-gold {
+    font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--deep); background: var(--gold);
+    padding: 1rem 2.2rem; text-decoration: none;
+    border: 1px solid var(--gold); transition: all 0.25s;
+  }
+  .btn-gold:hover { background: transparent; color: var(--gold); }
+  .btn-ghost {
+    font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 500;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--mist); background: transparent;
+    padding: 1rem 2.2rem; text-decoration: none;
+    border: 1px solid rgba(168,200,232,0.3); transition: all 0.25s;
+  }
+  .btn-ghost:hover { border-color: var(--mist); color: var(--foam); }
+
+  .hero-right { background: var(--ocean); position: relative; overflow: hidden; }
+  .hero-right img { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; mix-blend-mode: luminosity; }
+  .hero-overlay { position: absolute; inset: 0; background: linear-gradient(135deg, var(--navy) 0%, transparent 60%); }
+
+  .stat-strip {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    display: flex; background: rgba(8,20,36,0.94); backdrop-filter: blur(8px);
+  }
+  .stat { flex: 1; padding: 1.6rem 1.5rem; text-align: center; border-right: 1px solid rgba(255,255,255,0.06); }
+  .stat:last-child { border-right: none; }
+  .stat-n { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--gold); display: block; line-height: 1; }
+  .stat-l { font-family: 'Outfit', sans-serif; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mist); opacity: 0.55; margin-top: 0.35rem; display: block; }
+
+  /* SHARED */
+  section { position: relative; }
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 4rem; }
+  .lbl {
+    font-family: 'Outfit', sans-serif; font-size: 0.72rem;
+    letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500;
+    display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.2rem;
+  }
+  .lbl::after { content: ''; flex: 0 0 2.2rem; height: 1px; opacity: 0.35; }
+  .lbl-light { color: var(--ocean); }
+  .lbl-light::after { background: var(--ocean); }
+  .lbl-dark  { color: var(--mist); }
+  .lbl-dark::after  { background: var(--mist); }
+
+  /* PROBLEMA / OPORTUNIDAD */
+  #oportunidad { padding: 8rem 0; background: var(--sand); }
+  .opp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  .opp-text h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 3.5vw, 3.8rem);
+    font-weight: 300; line-height: 1.1; color: var(--deep); margin-bottom: 1.5rem;
+  }
+  .opp-text p { font-size: 1rem; line-height: 1.8; color: var(--ink); opacity: 0.72; margin-bottom: 1rem; }
+  .opp-text p strong { color: var(--ocean); font-weight: 500; }
+
+  .opp-numbers { display: flex; flex-direction: column; gap: 1.2rem; }
+  .opp-n {
+    padding: 1.8rem 2rem; background: var(--foam);
+    border-left: 3px solid var(--tide);
+  }
+  .opp-n-big {
+    font-family: 'Cormorant Garamond', serif; font-size: 3rem;
+    color: var(--ocean); line-height: 1; display: block;
+  }
+  .opp-n-label { font-size: 0.85rem; color: var(--ink); opacity: 0.6; margin-top: 0.3rem; line-height: 1.4; display: block; }
+
+  /* QUIÉNES SOMOS */
+  #quienes { padding: 8rem 0; background: var(--deep); }
+  #quienes h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 3vw, 3.2rem);
+    font-weight: 300; color: var(--foam); margin-bottom: 1rem; max-width: 560px;
+  }
+  .qs-sub { font-size: 1rem; color: var(--mist); opacity: 0.65; max-width: 560px; line-height: 1.75; margin-bottom: 4rem; }
+  .qs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px; }
+  .qs-card {
+    background: rgba(13,33,55,0.95);
+    border: 1px solid rgba(168,200,232,0.1);
+    padding: 2.8rem 2.2rem; position: relative; overflow: hidden;
+    transition: background 0.3s;
+  }
+  .qs-card:hover { background: rgba(46,109,164,0.18); }
+  .qs-icon { font-size: 2rem; margin-bottom: 1.4rem; display: block; }
+  .qs-divider { width: 2rem; height: 2px; background: var(--gold); margin-bottom: 1.2rem; }
+  .qs-card h3 {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.45rem;
+    font-weight: 400; color: var(--foam); line-height: 1.2; margin-bottom: 0.8rem;
+  }
+  .qs-card p { font-size: 0.82rem; color: var(--mist); opacity: 0.55; line-height: 1.6; }
+
+  /* SOLUCIÓN */
+  #solucion { padding: 8rem 0; background: var(--foam); }
+  #solucion h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 3vw, 3.2rem);
+    font-weight: 300; color: var(--deep); margin-bottom: 1rem;
+  }
+  .sol-sub { font-size: 1rem; color: var(--ink); opacity: 0.6; max-width: 540px; line-height: 1.75; margin-bottom: 4rem; }
+
+  /* proceso muy resumido */
+  .sol-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 4rem; }
+  .sol-step {
+    padding: 2.5rem 2rem; background: var(--sand);
+    border-top: 2px solid var(--mist); transition: border-color 0.3s, transform 0.3s;
+  }
+  .sol-step:hover { border-top-color: var(--ocean); transform: translateY(-4px); }
+  .sol-step-icon { font-size: 1.8rem; margin-bottom: 1rem; display: block; }
+  .sol-step h3 {
+    font-family: 'Outfit', sans-serif; font-weight: 500;
+    font-size: 1rem; color: var(--deep); margin-bottom: 0.5rem;
+  }
+  .sol-step p { font-size: 0.82rem; color: var(--ink); opacity: 0.6; line-height: 1.55; }
+
+  /* componentes 2x2 */
+  .comp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.2rem; }
+  .comp {
+    padding: 2rem 2rem; background: var(--sand);
+    border-left: 3px solid var(--tide);
+    display: flex; gap: 1.2rem; align-items: flex-start;
+    transition: border-color 0.25s;
+  }
+  .comp:hover { border-left-color: var(--ocean); }
+  .comp-num {
+    font-family: 'Cormorant Garamond', serif; font-size: 2.2rem;
+    font-weight: 300; color: var(--tide); opacity: 0.35; line-height: 1; flex-shrink: 0;
+  }
+  .comp-body h4 {
+    font-family: 'Outfit', sans-serif; font-weight: 500;
+    font-size: 0.95rem; color: var(--deep); margin-bottom: 0.3rem;
+  }
+  .comp-body p { font-size: 0.8rem; color: var(--ink); opacity: 0.55; line-height: 1.5; }
+
+  /* IMPACTO */
+  #impacto { padding: 7rem 0; background: var(--ocean); }
+  #impacto h2 {
+    font-family: 'Cormorant Garamond', serif; font-style: italic;
+    font-size: clamp(2.4rem, 4vw, 4rem);
+    font-weight: 300; color: var(--foam); max-width: 800px;
+    margin: 0 auto 3rem; text-align: center; line-height: 1.2;
+  }
+  .imp-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: rgba(255,255,255,0.08); }
+  .imp-stat { background: rgba(46,109,164,0.3); padding: 2.5rem 1.5rem; text-align: center; }
+  .imp-stat-n {
+    font-family: 'Cormorant Garamond', serif; font-size: 3rem;
+    color: var(--gold); display: block; line-height: 1;
+  }
+  .imp-stat-l {
+    font-family: 'Outfit', sans-serif; font-size: 0.62rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--foam); opacity: 0.6; margin-top: 0.5rem; display: block;
+  }
+
+  /* EQUIPO */
+  #equipo { padding: 8rem 0; background: var(--deep); }
+  #equipo h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 3vw, 3.2rem);
+    font-weight: 300; color: var(--foam); margin-bottom: 0.8rem;
+  }
+  .team-sub { font-size: 0.95rem; color: var(--mist); opacity: 0.6; max-width: 520px; line-height: 1.75; margin-bottom: 4rem; }
+  .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+  .member { position: relative; overflow: hidden; aspect-ratio: 3/4; background: var(--navy); }
+  .member img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; opacity: 0.75; }
+  .member:hover img { transform: scale(1.04); }
+  .member-over {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(8,20,36,0.95) 0%, transparent 52%);
+    display: flex; flex-direction: column; justify-content: flex-end; padding: 1.5rem;
+  }
+  .m-role { font-family: 'Outfit', sans-serif; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--gold); margin-bottom: 0.35rem; }
+  .m-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; color: var(--foam); line-height: 1.2; margin-bottom: 0.25rem; }
+  .m-bio { font-size: 0.72rem; color: var(--mist); opacity: 0.6; line-height: 1.4; }
+  .m-li {
+    display: inline-flex; align-items: center; gap: 0.25rem; margin-top: 0.7rem;
+    font-family: 'Outfit', sans-serif; font-size: 0.68rem;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--mist); text-decoration: none; opacity: 0.5; transition: opacity 0.2s;
+  }
+  .m-li:hover { opacity: 1; }
+
+  /* RECONOCIMIENTOS */
+  #reconocimientos { padding: 5rem 0; background: var(--foam); border-top: 1px solid rgba(46,109,164,0.1); }
+  .rec-sub { font-size: 0.88rem; color: var(--ink); opacity: 0.55; max-width: 640px; line-height: 1.7; margin-bottom: 2.2rem; }
+  .rec-tags { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .rec-tag {
+    font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 500;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ocean); border: 1px solid rgba(46,109,164,0.32);
+    padding: 0.45rem 1rem; transition: all 0.2s;
+  }
+  .rec-tag:hover { background: var(--ocean); color: var(--foam); }
+
+  /* CONTACTO */
+  #contacto { padding: 8rem 0; background: var(--sand); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: start; }
+  .contact-left h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 3vw, 3.2rem);
+    font-weight: 300; color: var(--deep); margin-bottom: 1rem;
+  }
+  .contact-left p { font-size: 0.95rem; color: var(--ink); opacity: 0.62; line-height: 1.75; margin-bottom: 2rem; }
+  .c-email {
+    display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1rem;
+    font-family: 'Outfit', sans-serif; font-size: 0.88rem;
+    color: var(--ocean); text-decoration: none;
+  }
+  .c-email:hover { color: var(--deep); }
+  .c-socials { display: flex; gap: 0.7rem; margin-top: 1.5rem; flex-wrap: wrap; }
+  .c-social {
+    font-family: 'Outfit', sans-serif; font-size: 0.75rem; font-weight: 500;
+    letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--ink); border: 1px solid rgba(13,27,42,0.18);
+    padding: 0.5rem 1rem; text-decoration: none; transition: all 0.2s;
+  }
+  .c-social:hover { background: var(--ocean); color: var(--foam); border-color: var(--ocean); }
+  .c-form { display: flex; flex-direction: column; gap: 1rem; }
+  .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .f-field { display: flex; flex-direction: column; gap: 0.4rem; }
+  .f-field label { font-family: 'Outfit', sans-serif; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ocean); opacity: 0.8; }
+  .f-field input, .f-field textarea {
+    font-family: 'Outfit', sans-serif; font-size: 0.9rem;
+    color: var(--ink); background: var(--foam);
+    border: 1px solid rgba(46,109,164,0.18);
+    padding: 0.9rem 1rem; outline: none; resize: vertical; transition: border-color 0.2s;
+  }
+  .f-field input:focus, .f-field textarea:focus { border-color: var(--ocean); }
+  .f-field textarea { min-height: 120px; }
+  .c-submit {
+    font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--foam); background: var(--deep);
+    border: none; padding: 1rem 2.5rem; cursor: pointer;
+    align-self: flex-start; transition: background 0.2s;
+  }
+  .c-submit:hover { background: var(--ocean); }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink); padding: 2.5rem 4rem;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+  }
+  .f-logo { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600; letter-spacing: 0.08em; color: var(--mist); }
+  .f-copy { font-family: 'Outfit', sans-serif; font-size: 0.68rem; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(168,200,232,0.3); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(28px); } to { opacity:1; transform:translateY(0); } }
+  .hero-left > * { animation: fadeUp 0.8s ease both; }
+  .hero-tag  { animation-delay: 0.1s; }
+  .hero-h1   { animation-delay: 0.25s; }
+  .hero-sub  { animation-delay: 0.4s; }
+  .hero-btns { animation-delay: 0.55s; }
+
+  /* RESPONSIVE — tablet */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    #hero { grid-template-columns: 1fr; }
+    .hero-left { padding: 7rem 1.5rem 3rem; }
+    .hero-right { min-height: 55vw; }
+    .stat-strip { position: static; }
+    .opp-grid, .contact-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .qs-grid { grid-template-columns: 1fr 1fr; }
+    .sol-steps { grid-template-columns: 1fr 1fr; }
+    .comp-grid { grid-template-columns: 1fr; }
+    .imp-stats { grid-template-columns: 1fr 1fr; }
+    .team-grid { grid-template-columns: 1fr 1fr; }
+    .container { padding: 0 1.5rem; }
+    #oportunidad, #quienes, #solucion, #impacto, #equipo, #reconocimientos, #contacto { padding: 5rem 0; }
+    footer { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; }
+  }
+
+  /* RESPONSIVE — mobile */
+  @media (max-width: 580px) {
+    /* Nav */
+    nav { padding: 0.9rem 1.2rem; gap: 0.5rem; }
+    .nav-logo { font-size: 0.95rem; }
+    .nav-cta { padding: 0.5rem 1rem; font-size: 0.65rem; }
+
+    /* Hero */
+    .hero-left { padding: 6rem 1.2rem 2.5rem; }
+    .hero-tag { font-size: 0.62rem; letter-spacing: 0.14em; }
+    .hero-h1 { font-size: clamp(2.4rem, 10vw, 3.2rem); margin-bottom: 1.2rem; }
+    .hero-sub { font-size: 0.92rem; margin-bottom: 2rem; max-width: 100%; }
+    .hero-btns { flex-direction: column; gap: 0.7rem; }
+    .btn-gold, .btn-ghost { padding: 0.85rem 1.5rem; font-size: 0.7rem; text-align: center; }
+    .hero-right { min-height: 45vw; }
+
+    /* Stat strip */
+    .stat-strip { display: grid; grid-template-columns: 1fr 1fr; }
+    .stat { border-right: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 1.1rem 0.8rem; }
+    .stat:nth-child(2n) { border-right: none; }
+    .stat-n { font-size: 1.5rem; }
+    .stat-l { font-size: 0.55rem; }
+
+    /* Sections */
+    #oportunidad, #quienes, #solucion, #impacto, #equipo, #reconocimientos, #contacto { padding: 4rem 0; }
+    .container { padding: 0 1.2rem; }
+
+    /* Opportunity numbers */
+    .opp-n-big { font-size: 2.2rem; }
+
+    /* Ejes / cards */
+    .qs-grid, .sol-steps { grid-template-columns: 1fr; }
+    .qs-card { padding: 2rem 1.5rem; }
+
+    /* Impact stats */
+    .imp-stats { grid-template-columns: 1fr 1fr; }
+    .imp-stat { padding: 1.5rem 1rem; }
+    .imp-stat-n { font-size: 2rem; }
+    #impacto h2 { font-size: clamp(1.8rem, 6vw, 2.8rem); margin-bottom: 2rem; }
+
+    /* Team */
+    .team-grid { grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+    .member { aspect-ratio: 2/3; }
+    .m-role { font-size: 0.52rem; letter-spacing: 0.1em; }
+    .m-name { font-size: 0.9rem; }
+    .m-bio { display: none; }
+    .m-li { display: none; }
+
+    /* Contact form */
+    .f-row { grid-template-columns: 1fr; }
+    .contact-grid { gap: 2.5rem; }
+
+    /* Footer */
+    footer { padding: 1.5rem 1.2rem; }
+
+    /* Labels */
+    .lbl { font-size: 0.6rem; }
+
+    /* Headings */
+    #quienes h2, #solucion h2, #equipo h2, .contact-left h2 {
+      font-size: clamp(2rem, 7vw, 2.8rem);
+    }
+    .opp-text h2 { font-size: clamp(2rem, 7vw, 2.8rem); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Aqua·Cultura Sostenible</a>
+  <ul class="nav-links">
+    <li><a href="#oportunidad">Oportunidad</a></li>
+    <li><a href="#quienes">Quiénes somos</a></li>
+    <li><a href="#solucion">Solución</a></li>
+    <li><a href="#equipo">Equipo</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+  <a href="#contacto" class="nav-cta">Invertir</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <span class="hero-tag">Biotecnología · Agua · Impacto</span>
+    <h1 class="hero-h1">
+      El agua no es<br>
+      <em>un recurso</em><br>
+      de un solo uso
+    </h1>
+    <p class="hero-sub">
+      Desarrollamos soluciones de biofiltración basadas en la naturaleza que transforman aguas residuales en un recurso circular — devolviendo autonomía hídrica a comunidades y negocios.
+    </p>
+    <div class="hero-btns">
+      <a href="#oportunidad" class="btn-gold">Ver la oportunidad</a>
+      <a href="#contacto" class="btn-ghost">Hablar con el equipo</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=900&q=80" alt="Agua">
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="stat-strip">
+    <div class="stat"><span class="stat-n">$5,200M</span><span class="stat-l">MXN gastados en pipas al año en La Paz</span></div>
+    <div class="stat"><span class="stat-n">60,000+</span><span class="stat-l">Hogares en mercado inicial</span></div>
+    <div class="stat"><span class="stat-n">50%</span><span class="stat-l">Reducción de dependencia hídrica</span></div>
+    <div class="stat"><span class="stat-n">100%</span><span class="stat-l">Equipo femenino de científicas</span></div>
+  </div>
+</section>
+
+<!-- OPORTUNIDAD -->
+<section id="oportunidad">
+  <div class="container">
+    <div class="opp-grid">
+      <div class="opp-text">
+        <span class="lbl lbl-light">La oportunidad</span>
+        <h2>Un mercado hídrico roto que espera solución</h2>
+        <p>En México, millones de hogares y negocios viven bajo un ciclo insostenible: usan el agua una sola vez y la desechan. En ciudades como La Paz, BCS, <strong>el 80% del agua se pierde</strong> tras un único uso, mientras la demanda supera la capacidad del sistema.</p>
+        <p>La planta municipal de tratamiento opera al 52% de su capacidad. El resto contamina ecosistemas costeros y marinos. La factura de este fracaso la pagan las familias — en pipas, en tandeos, en pérdida de autonomía.</p>
+        <p>Nuestra solución no compite con la infraestructura existente. La <strong>complementa desde abajo</strong>, en el punto de generación, donde el impacto es mayor y la escala es inmediata.</p>
+      </div>
+      <div class="opp-numbers">
+        <div class="opp-n">
+          <span class="opp-n-big">25M m³</span>
+          <span class="opp-n-label">Déficit hídrico anual del acuífero de La Paz, BCS</span>
+        </div>
+        <div class="opp-n">
+          <span class="opp-n-big">$84,000</span>
+          <span class="opp-n-label">MXN al año que puede gastar un solo hogar en pipas</span>
+        </div>
+        <div class="opp-n">
+          <span class="opp-n-big">48%</span>
+          <span class="opp-n-label">Del agua residual se descarga sin tratamiento al ambiente marino</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIÉNES SOMOS -->
+<section id="quienes">
+  <div class="container">
+    <span class="lbl lbl-dark">Quiénes somos</span>
+    <h2>Una iniciativa de I+D liderada por mujeres científicas</h2>
+    <p class="qs-sub">AquaCultura Sostenible (ACS) integra investigación científica, conocimiento tradicional y diseño contextual para crear soluciones hídricas que funcionan donde los sistemas convencionales no llegan. Nuestra labor se articula en tres ejes estratégicos.</p>
+    <div class="qs-grid">
+      <div class="qs-card">
+        <span class="qs-icon">💧</span>
+        <div class="qs-divider"></div>
+        <h3>Cultura del agua y comunidad</h3>
+        <p>Fortalecemos la gestión comunitaria del agua, con las mujeres como agentes centrales del cambio y la sostenibilidad.</p>
+      </div>
+      <div class="qs-card">
+        <span class="qs-icon">🔄</span>
+        <div class="qs-divider"></div>
+        <h3>Manejo sostenible del agua</h3>
+        <p>Desarrollamos tecnología de biofiltración que cierra el ciclo del agua en el punto de generación, sin depender de infraestructura centralizada.</p>
+      </div>
+      <div class="qs-card">
+        <span class="qs-icon">🐟</span>
+        <div class="qs-divider"></div>
+        <h3>Producción sostenible de alimentos</h3>
+        <p>El agua tratada alimenta sistemas productivos de acuacultura y agroecología, generando valor económico y seguridad alimentaria local.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUCIÓN -->
+<section id="solucion">
+  <div class="container">
+    <span class="lbl lbl-light">Nuestra solución</span>
+    <h2>Biotecnología basada en la naturaleza</h2>
+    <p class="sol-sub">Nuestros biofiltros convierten aguas grises domésticas en agua reutilizable — sin electricidad, sin químicos, sin complejidad operativa. El resultado es un sistema que embellece el espacio y resuelve un problema real.</p>
+
+    <div class="sol-steps">
+      <div class="sol-step">
+        <span class="sol-step-icon">🔍</span>
+        <h3>Diagnóstico y diseño</h3>
+        <p>Cada sistema se diseña a medida del espacio y las necesidades del usuario, con materiales disponibles localmente.</p>
+      </div>
+      <div class="sol-step">
+        <span class="sol-step-icon">🌿</span>
+        <h3>Biofiltración natural</h3>
+        <p>El agua pasa por un sistema vivo de plantas y microorganismos que eliminan contaminantes de forma pasiva y continua.</p>
+      </div>
+      <div class="sol-step">
+        <span class="sol-step-icon">♻️</span>
+        <h3>Reuso y autonomía</h3>
+        <p>El agua tratada se redirige a usos secundarios, reduciendo a la mitad la dependencia de fuentes externas.</p>
+      </div>
+    </div>
+
+    <span class="lbl lbl-light" style="margin-bottom:2rem">Cuatro componentes de acción</span>
+    <div class="comp-grid">
+      <div class="comp">
+        <span class="comp-num">I</span>
+        <div class="comp-body">
+          <h4>Optimizar el uso del agua</h4>
+          <p>Diagnóstico de consumo y estrategias para romper el ciclo de un solo uso.</p>
+        </div>
+      </div>
+      <div class="comp">
+        <span class="comp-num">II</span>
+        <div class="comp-body">
+          <h4>Tecnologías para aguas residuales</h4>
+          <p>Diseño e instalación de biofiltros adaptados al contexto local y productivo.</p>
+        </div>
+      </div>
+      <div class="comp">
+        <span class="comp-num">III</span>
+        <div class="comp-body">
+          <h4>Prácticas agroecológicas</h4>
+          <p>Integración del agua tratada en sistemas de producción de alimentos sostenibles.</p>
+        </div>
+      </div>
+      <div class="comp">
+        <span class="comp-num">IV</span>
+        <div class="comp-body">
+          <h4>Capacidades y saberes locales</h4>
+          <p>Formación de promotoras comunitarias que multiplican y mantienen los sistemas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACTO -->
+<section id="impacto">
+  <div class="container">
+    <h2>"Pasar del 'usar y desechar' a cerrar el ciclo del agua en el punto de generación"</h2>
+    <div class="imp-stats">
+      <div class="imp-stat"><span class="imp-stat-n">–50%</span><span class="imp-stat-l">Dependencia de pipas por hogar</span></div>
+      <div class="imp-stat"><span class="imp-stat-n">13M m³</span><span class="imp-stat-l">Agua gris rescatada del drenaje por año</span></div>
+      <div class="imp-stat"><span class="imp-stat-n">0 kW</span><span class="imp-stat-l">Consumo eléctrico del sistema</span></div>
+      <div class="imp-stat"><span class="imp-stat-n">10+</span><span class="imp-stat-l">Años de investigación y trabajo en campo</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPO -->
+<section id="equipo">
+  <div class="container">
+    <span class="lbl lbl-dark">El equipo</span>
+    <h2>Ciencia, experiencia<br>y territorio</h2>
+    <p class="team-sub">Un equipo 100% femenino de biólogas marinas con doctorado, experiencia en campo y una red de alianzas institucionales construida durante más de una década.</p>
+    <div class="team-grid">
+      <div class="member">
+        <img src="https://static.wixstatic.com/media/010d22_e1b5544649a34a8fb1101dfb9a6098af~mv2.jpeg" alt="Dr. Eliza Martínez-Antonio">
+        <div class="member-over">
+          <span class="m-role">Fundadora · Investigadora principal</span>
+          <div class="m-name">Dr. Eliza<br>Martínez-Antonio</div>
+          <p class="m-bio">Doctora en Acuicultura. Especialista en biofiltración y sistemas agro-acuícolas, Oaxaca y BCS.</p>
+          <a href="https://www.linkedin.com/in/eliza-martinez-938748b4" target="_blank" class="m-li">↗ LinkedIn</a>
+        </div>
+      </div>
+      <div class="member">
+        <img src="https://static.wixstatic.com/media/010d22_02015d09baf849c3b1ddf1e96ace6c04~mv2.jpg" alt="Dr. Mariana Díaz-Santana-Iturrios">
+        <div class="member-over">
+          <span class="m-role">Investigadora · Biodiversidad</span>
+          <div class="m-name">Dr. Mariana<br>Díaz-Santana-Iturrios</div>
+          <p class="m-bio">Bióloga marina en La Paz BCS. Experta en conservación y comunicación científica.</p>
+          <a href="https://www.linkedin.com/in/mariana-d%C3%ADaz-santana-iturrios-0a95b6149" target="_blank" class="m-li">↗ LinkedIn</a>
+        </div>
+      </div>
+      <div class="member">
+        <img src="https://static.wixstatic.com/media/010d22_a06f06a6a4404550b14316eb87d33a77~mv2.jpg" alt="BSc. Renata Pacheco-Ovando">
+        <div class="member-over">
+          <span class="m-role">Educadora · Gestión de proyectos</span>
+          <div class="m-name">BSc. Renata<br>Pacheco-Ovando</div>
+          <p class="m-bio">Bióloga marina y traductora científica. Diplomado en conservación, CDMX.</p>
+          <a href="https://www.linkedin.com/in/renata-pacheco-ovando-77b095204" target="_blank" class="m-li">↗ LinkedIn</a>
+        </div>
+      </div>
+      <div class="member">
+        <img src="https://static.wixstatic.com/media/010d22_70ad12de29b2498fbc1b2a89b7a846a7~mv2.jpeg" alt="MSc. Ariadna Sánchez García">
+        <div class="member-over">
+          <span class="m-role">Educadora · Análisis de datos</span>
+          <div class="m-name">MSc. Ariadna<br>Sánchez García</div>
+          <p class="m-bio">Bióloga marina especialista en organismos acuáticos, datos y divulgación científica.</p>
+          <a href="https://www.linkedin.com/in/ariadna-malinalli-sanchez-garcia/" target="_blank" class="m-li">↗ LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RECONOCIMIENTOS -->
+<section id="reconocimientos">
+  <div class="container">
+    <span class="lbl lbl-light">Reconocimientos y alianzas</span>
+    <p class="rec-sub">Avaladas por instituciones nacionales e internacionales que respaldan la solidez científica y el impacto social de nuestra iniciativa.</p>
+    <div class="rec-tags">
+      <span class="rec-tag">CONAHCYT</span>
+      <span class="rec-tag">Fundación Carolina</span>
+      <span class="rec-tag">JICA</span>
+      <span class="rec-tag">Banco Azteca</span>
+      <span class="rec-tag">COSCYT</span>
+      <span class="rec-tag">IPN</span>
+      <span class="rec-tag">CIBnor</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-left">
+        <span class="lbl lbl-light">Hablemos</span>
+        <h2>¿Te interesa<br>invertir o aliarte?</h2>
+        <p>Estamos en etapa de crecimiento y buscamos aliados estratégicos, fondos de impacto e inversores que compartan nuestra visión de un ciclo del agua más justo y sostenible.</p>
+        <a href="mailto:aquaculturasostenible@gmail.com" class="c-email">✉ aquaculturasostenible@gmail.com</a>
+        <div class="c-socials">
+          <a href="https://www.facebook.com/share/19hN1EweLQ/" target="_blank" class="c-social">Facebook</a>
+          <a href="https://www.instagram.com/aqua.cultura.sostenible_1/" target="_blank" class="c-social">Instagram</a>
+          <a href="https://www.linkedin.com/in/eliza-martinez-938748b4" target="_blank" class="c-social">LinkedIn</a>
+        </div>
+      </div>
+      <div class="c-form">
+        <div class="f-row">
+          <div class="f-field"><label>Nombre</label><input type="text" placeholder="Tu nombre"></div>
+          <div class="f-field"><label>Organización</label><input type="text" placeholder="Tu institución o empresa"></div>
+        </div>
+        <div class="f-field"><label>Correo electrónico</label><input type="email" placeholder="tu@correo.com"></div>
+        <div class="f-field"><label>Mensaje</label><textarea placeholder="¿En qué tipo de colaboración estás interesado/a?"></textarea></div>
+        <button class="c-submit" onclick="alert('¡Mensaje enviado! Nos pondremos en contacto pronto.')">Enviar →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="f-l
